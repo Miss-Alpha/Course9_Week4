@@ -1,0 +1,51 @@
+---
+title: "World Statistics"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+library(dplyr)
+library(gapminder)
+library(plotly)
+```
+
+## Shiny Application and Reproducible Pitch
+
+This assignment is a part of Johns Hopkins Data Science course, the aim of this exercise is to show the some features that can be shown through shiny webapp. 
+
+[Gapminder](https://www.gapminder.org/about/about-gapminder/) was founded in Stockholm on 25 February 2005 by Ola Rosling, Anna Rosling Rönnlund, and Hans Rosling. In 2006, Hans gave his first TED talk, called, “The best statistics you’ve ever seen”. It became one of the most watched TED talks ever. 
+Excerpt of the Gapminder data on life expectancy, GDP per capita, and population by country is freely available on R library `gapminder`. The main data frame `gapminder` has 1704 rows and 6 variables.
+
+
+## What the Application Does
+This [application](https://6s7q2t-atoosa-m0.shinyapps.io/Course9_Week4/?_ga=2.151167673.1843153099.1638518540-1593049211.1638518540) aims at showing the World Statistics via `gapminder` dataset. 
+
+By clicking on one of three features, a line graph is shown throughout the years. The features are:
+
+- GDP per Capita
+- Life Expectancy
+- Poplation
+
+Additionaly, on the `Table` tab the data that was used to depict the graph is shown.
+
+## How the Application Works
+The application computes the average of GDP, life expectancy and population for each continent for different years. The comupation is accomplished through the `dplyr` package.
+```{r data summary, echo = TRUE}
+gaps_df <- data("gapminder")
+    gaps_df <- gapminder %>%
+        group_by(continent, year) %>%
+        summarize(gdp_mean = mean(gdpPercap), 
+                  lifeExp_mean = mean(lifeExp), 
+                  population_mean = mean(pop))
+```
+By getting the input of radio button, the application decides which variable it is required to show, and a plot is drawn based on the information. This stage was done with the help of `plotly` package.
+
+## An Example
+If GDP is selected in the sidebar, a plot is drawn with the following specification.
+```{r plotly example, echo = TRUE}
+plot_ly(gaps_df, x= ~year, y= ~gdp_mean, color = ~continent, 
+        type = "scatter",  mode = "lines+markers", colors = "Set1", 
+        marker = list(size = 10, width = 2))
+```
+
